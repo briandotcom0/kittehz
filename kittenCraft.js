@@ -42,7 +42,11 @@ Logger = {
 	isLogType: function (logType) {
 		return this.enabled && (this.logType == 'both' || this.logType == logType);
 	},
-	toggleConsole: function () {
+	setType: function (logType) {
+		return this.logType = logType;
+	},
+	toggle: function () {
+		this.log('Logging turned ' + (!this.enabled ? 'off': 'on'), 'notice');
 		this.enabled = !this.enabled;
 	}
 }
@@ -449,6 +453,9 @@ Race.prototype.toggle = function (){
 	this.enabled = !this.enabled;
 	this.logger.log('Trading with ' + this.name + ' ' + (this.enabled ? 'started' : 'stopped'), 'notice');
 }
+Race.prototype.setAmount = function (amount){
+	this.amount = amount;
+}
 Race.prototype.setSeasons = function (seasons) {
 	if(seasons) {
 		for (sName in seasons) {
@@ -570,53 +577,24 @@ KittenCraft.prototype.setRefresh = function (refresh)
 	this.refresh = refresh;
 	if(this.id) this.start();
 }
-//some logging
-//Logger.logType can be: console, game, both
-//Logger.enabled enable/disable logging
+// Configure stuff
 Logger.init(gamePage);
-// name: name of the resource in game. Except for compedium, its the same, that appears on UI
-// amount: represents the the +,+25,+100 next to the materials also accepts 'all' to craft al your resources to this material
-// upper limit in % ([0;1]), if resource reaches maxValue(storage cap) * limit, it crafts amount number material
 var common = [{name: 'wood',  amount: 100, 	limit: 0.8},
 			  {name: 'beam',  amount: 25, 	limit: 0.8},
 			  {name: 'slab',  amount: 25, 	limit: 0.8},
 			  {name: 'steel', amount: 'all',limit: 0.8},
 			  {name: 'plate', amount: 10, 	limit: 0.8}];
-// name and amount is the same as @ common
-// limit here is a down limit you always have from its price resources
-// zumbeispiel: @perchament limit is 5000 means your furs amount never can go under 5000
 var uncommon  = [{name: 'parchment',  amount: 50, 	 limit: 5000},
 				 {name: 'manuscript', amount: 'all', limit: 0},
 				 {name: 'compedium',  amount: 'all', limit: 0}
 				 ];
 var kittenCraft = new KittenCraft(common, uncommon, Logger);
-//at trading limit refers only to gold (goldMaxValue * limit) then it trades amount times specified @racees
-//seasons: races trades only in the seasons with true value.
+kittenCraft.getRes('faith').set({amount: 0, limit: 0.1});
+kittenCraft.getRes('manpower').set({amount: 3, limit: 0.8});
+
 kittenCraft.getRes('trade').set({limit: 0.8});
 kittenCraft.getRes('trade').addRace({name: 'Zebras', amount: 1, seasons:{spring: true, summer: true, autumn: true, winter: true}});
 kittenCraft.getRes('trade').addRace({name: 'Sharks', amount: 1, seasons: {winter: true}});
-//
-// You can turn on and off sepcified resource automations:
-// kittenCraft.toggle('wood')
-//
-// You can set parameters for resources
-// kittenCraft.gerRes('wood').set({limit: 0.7, amount: 200})
-// or
-// kittenCraft.getRes('wood').amount = 200
-// kittenCraft.getRes('wood').limit = 0.8
-//
-// kittenCraft also hunts, praises, and collects starcharts
-// var data = {name: 'trade', amount: 0, limit: 0.1}; ==> no need for amount, it is specified per race
-// var data = {name: 'faith', amount: 0, limit: 0.1}; ==> no need for amount, you can only praise all of you faith
-// var data = {name: 'manpower', amount: 3, limit: 0.8}; ==> amount 3 means 300 manpower used to hunt
-// you can give these too to the getRes's set
-//
-// calendar is very simple, and has just few properties
-// you can turn it on and off ==> kittenCraft.toggle('calendar')
-//
-// refresh rate is 3secs for kitten craft change it as you wish
-// kittenCraft.setRefresh(5000) => 5sec
+
 kittenCraft.start();
-//
-// kittenCraft.stop() to stop this nightmare...
-//kittenCraft.getRes('parchment').set({limit:4000})
+
