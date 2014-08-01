@@ -115,12 +115,13 @@ Important to know, the crafting occurs only if the resource is already unlocked 
 			name: 'Zebras', amount: 1, seasons:{spring: true, summer: true, autumn: true, winter: true}
 			name: 'Sharks', amount: 1, seasons: {winter: true}
 	
-	All resource is enabled for default.
-	Logging is set to 'both' by default
+	All resources are enabled.
+	Logging is set to 'both'.
+	Refresh rate is set for 5 seconds. 
 
 6.) Known issues
-	- Uncommon resources limitations not working exactly like i want to (as i wrote above)
-	- UI flickers disturbingly if refresh is set too low (around below 3 seconds) - due tab changes
+	- Uncommon resources limitations not working exactly like i want to (as i wrote above) - FIXED
+	- UI flickers disturbingly if refresh is set too low (around below 3 seconds) - due tab changes - FIXED
 	- if you reset while script is running some weird shit can happen: 
 		you get the karma and paragon, but all buildings, resources, and everything remains (not sure its my fault, but can be)
 	- game gets really slow after a few hours of run with kittenCraft. Recommended to reload the whole thing then.

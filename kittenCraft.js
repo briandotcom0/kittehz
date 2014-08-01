@@ -90,7 +90,7 @@ Resource.prototype.prodMsg = function (craftedAmount) {
 	}
 }
 Resource.prototype.isUnlocked = function() {
-	return this.game.workshop.getCraft(this.name).unlocked;
+	return this.game.workshop.getCraft(this.name).unlocked && (this.game.science.get("construction").researched || this.name == 'wood');
 }
 Resource.prototype.isCraftable = function () {
 	return this.isUnlocked() && this.enabled;
@@ -181,7 +181,7 @@ Uncommon.prototype.hasEnoughResource = function (withLimit)
 Uncommon.prototype.checkPrice = function (base, limitValue)
 {
 	var amt = (limitValue) ? this.amount : 1;
-	return ((this.game.resPool.get(base.name).value - limitValue) >= base.val);
+	return ((this.game.resPool.get(base.name).value - limitValue) >= base.val * amt);
 }
 /**************************************************************************/
 /**************************************************************************/
@@ -362,14 +362,14 @@ function Trade (logger)
 Trade.inheritsFrom( Resource );
 Trade.prototype.craft = function ()
 {
-	var bkpTab = this.changeTab(this.title);
 	var res = this.game.resPool.get(this.mainPrice);
 	if(this.isCraftable() && res.value >= res.maxValue * this.limit){
+		var bkpTab = this.changeTab(this.title);
 		for(var i = 0; i < this.races.length; i++) {
 			this.races[i].craft();
 		}
+		this.changeTab(bkpTab);
 	}
-	this.changeTab(bkpTab);
 }
 Trade.prototype.changeTab = function (tabName) {
 	var active = '';
@@ -459,8 +459,7 @@ Race.prototype.setAmount = function (amount){
 Race.prototype.setSeasons = function (seasons) {
 	if(seasons) {
 		for (sName in seasons) {
-			this.seasons[sName] = seasons[sName]; 
-			this.logger.log('Trading with ' + this.name + ' in ' + sName + ' ' + (this.seasons[sName] ? 'started' : 'stopped'), 'notice');
+			this.seasons[sName] = seasons[sName];
 		}
 	}
 }
@@ -497,7 +496,7 @@ function KittenCraft(common, uncommon, logger)
 {
 	this.id = null;
 	this.resource = [];
-	this.refresh = 3000;
+	this.refresh = 5000;
 	this.logger = logger;
 	this.game = logger.game;
 	this.initResources(common, uncommon);	
