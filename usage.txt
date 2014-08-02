@@ -22,6 +22,10 @@
 		kittenCraft.stop()
 	Set refresh interval: if you set this too low, and manpower / faith / trade if turned on the ui will disturbingly flicker due to tab changes. I recommend 5 seconds or above. If you set this during running, kittenCraft wil restart, but settings will not change.
 		kittenCraft.setRefresh(milliseconds) => kittenCraft.setRefresh(5000) => one tick will be 5 seconds
+	Export customized settings:
+		kittenCraft.export(); => you got a string in the console. Save that string somewhere.
+	Import your settings:
+		kittenCraft.import("{youSettingString}") => replace {youSettingString} with the string you got with from export.
 		
 4.a) Logging
 	Kitten craft makes some logging. You can turn it on and off.

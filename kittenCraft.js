@@ -668,7 +668,7 @@ KittenCraft.prototype.setRefresh = function (refresh)
 	this.refresh = refresh;
 	if(this.id) this.start();
 }
-KittenCraft.prototype.exportSettings = function ()
+KittenCraft.prototype.export = function ()
 {
 	this.stop();
 	var settings = new Object();
@@ -678,16 +678,21 @@ KittenCraft.prototype.exportSettings = function ()
 	}
 	settings['refresh'] = this.refresh;
 	this.start();
-	return btoa(JSON.stringify(settings));
+	console.log(btoa(JSON.stringify(settings)));
 }
-KittenCraft.prototype.importSettings = function (settings)
+KittenCraft.prototype.import = function (settings)
 {
 	this.stop();
 	var sett = JSON.parse(atob(settings));
 	for (name in sett) {
-		var res = this.getRes(name);
-		if(res) res.load(sett[name]);
-		else if(name == 'refresh') this.setRefresh(sett['refresh']);
+		if(name == 'refresh') this.setRefresh(sett['refresh']);
+		else if(res){ 
+			var res = this.getRes(name);
+			res.load(sett[name]);
+		}
+		else {
+			this.resource.push(new window[sett[name].type](sett[name], this.logger));
+		}
 	}
 	this.start();
 }
