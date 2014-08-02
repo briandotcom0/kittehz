@@ -17,13 +17,7 @@
 
 4.) Basics
 	Start kittenCraft: 
-
-```
-#!javascript
-
 		kittenCraft.start()
-
-```
 	Stop kittenCraft:
 		kittenCraft.stop()
 	Set refresh interval: if you set this too low, and manpower / faith / trade if turned on the ui will disturbingly flicker due to tab changes. I recommend 5 seconds or above. If you set this during running, kittenCraft wil restart, but settings will not change.
