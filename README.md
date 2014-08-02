@@ -1,8 +1,10 @@
 1.) Intro
+
 	Kitten craft is an automation tool for kittensgame. 
 	It does some frequent crafting tasks like: craft wood from catnip, hunt, or gather some star charts.
 
 2.) Getting started
+
 	You can control Kitten craft from your browsers javascript console.
 	How to open console: http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers
 		a. Open console
@@ -11,11 +13,13 @@
 	The script starts to run with the default settings.
 
 3.) Resource types in my way
+
 	Common: the raw materials they crafted from, have cap limit (like wood, beam, slab, plate, etc.)
 	Uncommon: the raw materials they crafted from, haven't got cap limit (like parchment, compedium, etc.)
 	Transient: manpower, faith, star chart, and trading actions (i know, it makes no sense...) 
 
 4.) Basics
+
 	Start kittenCraft: 
 		kittenCraft.start()
 	Stop kittenCraft:
@@ -28,6 +32,7 @@
 		kittenCraft.import("{youSettingString}") => replace {youSettingString} with the string you got with from export.
 		
 4.a) Logging
+
 	Kitten craft makes some logging. You can turn it on and off.
 		Logger.toggle()
 	
@@ -37,6 +42,7 @@
 		Logger.setType(type)
 
 4.b) Resource manipulation
+
 	All resources have name, amount, limit and enabled properties
 	@prop name: 
 		You can use this properties, to refer to the resource object, to make further actions with it.
@@ -124,6 +130,7 @@ Important to know, the crafting occurs only if the resource is already unlocked 
 	Refresh rate is set for 5 seconds. 
 
 6.) Known issues
+
 	- Uncommon resources limitations not working exactly like i want to (as i wrote above) - FIXED
 	- UI flickers disturbingly if refresh is set too low (around below 3 seconds) - due tab changes - FIXED
 	- if you reset while script is running some weird shit can happen: 
