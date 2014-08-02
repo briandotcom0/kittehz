@@ -1,6 +1,6 @@
 1.) Intro
 
-	Kitten craft is an automation tool for kittensgame. 
+	Kitten craft is an automation tool for kittensgame. [http://bloodrizer.ru/games/kittens/#](http://bloodrizer.ru/games/kittens/#)
 	It does some frequent crafting tasks like: craft wood from catnip, hunt, or gather some star charts.
 
 2.) Getting started
@@ -141,7 +141,6 @@ Important to know, the crafting occurs only if the resource is already unlocked 
 I can only hope this mess is understandable.
 Enjoy.
 
-****************
-**    dio     **
-** 2014.07.31 **
-****************
+dio 
+2014.08.02.
+[on reddit](http://www.reddit.com/r/kittensgame/comments/2c2nx3/kittencraft_for_no_reason/)
