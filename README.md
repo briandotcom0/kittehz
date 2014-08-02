@@ -74,6 +74,7 @@
 			kittenCraft.disableAllRes() => turns off all resource production
 	
 4.c) Transients
+
 	Manpower:
 		Send your kittens to hunt. Parameterization is the same as for common resources:
 			kittenCraft.getRes('manpower').set({amount: 3, limit: 0.8}) => if manpower reaches {manpowers max value} * {limit} (here 80%) send 3 squads of hunters (uses 300 manpower to hunt)
