@@ -50,7 +50,6 @@ Logger = {
 		this.enabled = !this.enabled;
 	}
 }
-
 /**************************************************************************/
 /**************************************************************************/
 
@@ -115,6 +114,16 @@ Resource.prototype.set = function (data) {
 	for(key in data){
 		if(that.hasOwnProperty(key)) that[key] = data[key];
 	}
+}
+Resource.prototype.save = function () {
+	return new SaveObj(this)
+}
+Resource.prototype.load = function (obj) {
+	this.init(obj, this.logger);
+	this.enabled = obj.enabled;
+}
+Resource.prototype.getType = function () {
+	return 'Resource';
 }
 /**************************************************************************/
 /**************************************************************************/
@@ -183,6 +192,9 @@ Uncommon.prototype.checkPrice = function (base, limitValue)
 	var amt = (limitValue) ? this.amount : 1;
 	return ((this.game.resPool.get(base.name).value - limitValue) >= base.val * amt);
 }
+Uncommon.prototype.getType = function () {
+	return 'Uncommon';
+}
 /**************************************************************************/
 /**************************************************************************/
 function Common(data, logger)
@@ -229,7 +241,9 @@ Common.prototype.checkLimit = function (limitType, base)
 	}
 	return actNumber >= limit;
 }
-
+Common.prototype.getType = function () {
+	return 'Common';
+}
 
 /**************************************************************************/
 /**************************************************************************/
@@ -311,6 +325,18 @@ Manpower.prototype.changeTab = function (tabName) {
 Manpower.prototype.isTabActive = function (tabName) {
 	return this.game.activeTabId == tabName;
 }
+Manpower.prototype.save = function () {
+	return new SaveObj(this)
+}
+Manpower.prototype.getType = function () {
+	return 'Manpower';
+}
+Manpower.prototype.load = function (obj) {
+	this.init(obj, this.logger);
+	this.enabled = obj.enabled;
+	this.req = obj.req ;
+	this.title = obj.title;
+}
 /**************************************************************************/
 /**************************************************************************/
 
@@ -346,6 +372,18 @@ Religion.prototype.changeTab = function (tabName) {
 }
 Religion.prototype.isTabActive = function (tabName) {
 	return this.game.activeTabId == tabName;
+}
+Religion.prototype.save = function () {
+	return new SaveObj(this)
+}
+Religion.prototype.getType = function () {
+	return 'Religion';
+}
+Religion.prototype.load = function (obj) {
+	this.init(obj, this.logger);
+	this.enabled = obj.enabled;
+	this.req = obj.req ;
+	this.title = obj.title;
 }
 /**************************************************************************/
 /**************************************************************************/
@@ -412,8 +450,34 @@ Trade.prototype.toggleRace = function(name) {
 Trade.prototype.isUnlocked = function() {
 	return this.game.workshop.get(this.req).unlocked;
 }
+Trade.prototype.saveRaces = function() {
+	var savedRaces = [];
+	for (var i = 0; i < this.races.length; i++) {
+		savedRaces.push(this.races[i].save());
+	}
+	return savedRaces;
+}
+Trade.prototype.save = function () {
+	return new SaveObj(this)
+}
+Trade.prototype.getType = function () {
+	return 'Trade';
+}
+Trade.prototype.load = function (obj) {
+	this.init(obj, this.logger);
+	this.enabled = obj.enabled;
+	this.req = obj.req ;
+	this.title = obj.title;
+	this.mainPrice = obj.mainPrice;
+	this.races = [];
+	for (var i = 0; i < obj.races.length; i++) {
+		this.addRace(obj.races[i], this.logger);
+		this.races[i].enabled = obj.races[i].enabled;
+	}
+}
 /**************************************************************************/
 /**************************************************************************/
+
 function Race(data, logger) {
 	this.name = data.name.toLowerCase();
 	this.amount = data.amount;
@@ -425,16 +489,13 @@ function Race(data, logger) {
 }
 Race.prototype.craft = function (){
 	if(this.isTradingSeason()){
-		//console.log('  isTradingSeason:' + this.isTradingSeason());
 		var tradeBtn = this.getTradeBtn();
-		//console.log(tradeBtn);
 		(this.amount == 'all') ? tradeBtn.tradeAll() : this.tradeAmount(tradeBtn);
 	}
 }
 Race.prototype.tradeAmount = function (tradeBtn){
 	var i = 0;
 	while( i < this.amount) {
-		//console.log(i);
 		tradeBtn.onClick();
 		i++;
 	}
@@ -463,6 +524,9 @@ Race.prototype.setSeasons = function (seasons) {
 		}
 	}
 }
+Race.prototype.save = function (){
+	return new SaveRace(this);
+}
 /**************************************************************************/
 /**************************************************************************/
 
@@ -488,6 +552,34 @@ Calendar.prototype.craft = function ()
 }
 Calendar.prototype.toggle = function () {
 	this.enabled = !this.enabled
+}
+Calendar.prototype.save = function () {
+	return new SaveObj(this)
+}
+Calendar.prototype.getType = function () {
+	return 'Calendar';
+}
+Calendar.prototype.load = function (obj) {
+	this.enabled = obj.enabled;
+}
+/**************************************************************************/
+/**************************************************************************/
+function SaveObj (obj) {
+	this.name = obj.name;
+	this.enabled = obj.enabled;
+	this.type = obj.getType();
+	if(obj.hasOwnProperty('amount'))this.amount = obj.amount;
+	if(obj.hasOwnProperty('limit'))this.limit = obj.limit;
+	if(obj.hasOwnProperty('req')) this.req = obj.req;
+	if(obj.hasOwnProperty('title')) this.title = obj.title;
+	if(obj.hasOwnProperty('mainPrice')) this.mainPrice = obj.mainPrice;
+	if(obj.hasOwnProperty('races')) this.races = obj.saveRaces();
+}
+function SaveRace (obj) {
+	this.name = obj.name;
+	this.amount = obj.amount;
+	this.enabled = obj.enabled;
+	this.seasons = obj.seasons;
 }
 
 /**************************************************************************/
@@ -525,7 +617,7 @@ KittenCraft.prototype.getRes = function (name)
 		if (this.resource[i].name == name) 
 			return this.resource[i];
 	}
-	this.log('Can\'t find resource ' + name, 'error');
+	this.log('Can\'t find resource: ' + name, 'error');
 	return null;
 }
 KittenCraft.prototype.setRes = function (name, data)
@@ -562,7 +654,7 @@ KittenCraft.prototype.start = function ()
 	if (this.id) this.stop();
 	var that = this;
 	this.id = window.setInterval(function () { that.craft();}, this.refresh);
-	this.log('Refresh interval is ' + this.refresh/1000 + ' sec', 'notice');
+	this.log('Refresh interval is set to ' + this.refresh/1000 + ' sec', 'notice');
 	this.log('KittenCraft started.', 'notice');
 }
 KittenCraft.prototype.stop = function ()
@@ -576,6 +668,30 @@ KittenCraft.prototype.setRefresh = function (refresh)
 	this.refresh = refresh;
 	if(this.id) this.start();
 }
+KittenCraft.prototype.exportSettings = function ()
+{
+	this.stop();
+	var settings = new Object();
+	for (var i = 0; i < this.resource.length; i++) {
+		var saveObj = this.resource[i].save();
+		settings[saveObj.name] = saveObj;
+	}
+	settings['refresh'] = this.refresh;
+	this.start();
+	return btoa(JSON.stringify(settings));
+}
+KittenCraft.prototype.importSettings = function (settings)
+{
+	this.stop();
+	var sett = JSON.parse(atob(settings));
+	for (name in sett) {
+		var res = this.getRes(name);
+		if(res) res.load(sett[name]);
+		else if(name == 'refresh') this.setRefresh(sett['refresh']);
+	}
+	this.start();
+}
+
 // Configure stuff
 Logger.init(gamePage);
 var common = [{name: 'wood',  amount: 100, 	limit: 0.8},
