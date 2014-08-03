@@ -685,9 +685,9 @@ KittenCraft.prototype.import = function (settings)
 	this.stop();
 	var sett = JSON.parse(atob(settings));
 	for (name in sett) {
+		var res = this.getRes(name);
 		if(name == 'refresh') this.setRefresh(sett['refresh']);
 		else if(res){ 
-			var res = this.getRes(name);
 			res.load(sett[name]);
 		}
 		else {
