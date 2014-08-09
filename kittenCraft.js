@@ -488,7 +488,7 @@ function Race(data, logger) {
 	this.setSeasons(data.seasons);
 }
 Race.prototype.craft = function (){
-	if(this.isTradingSeason()){
+	if(this.isTradingSeason() && this.enabled){
 		var tradeBtn = this.getTradeBtn();
 		(this.amount == 'all') ? tradeBtn.tradeAll() : this.tradeAmount(tradeBtn);
 	}
