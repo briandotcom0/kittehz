@@ -293,7 +293,7 @@ Manpower.prototype.craftAmount = function () {
 	var i = 0;
 	var bkpTab = this.changeTab(this.title);
 	var huntingRes = new HuntingResolution();
-	var huntButton = this.game.villageTab.hutnBtn;
+	var huntButton = this.game.villageTab.huntBtn;
 	while (huntButton.enabled && huntButton.hasResources() && i < parseInt(this.amount)) {
 		huntingRes.add(this.doHunt(huntButton));
 		i++;
